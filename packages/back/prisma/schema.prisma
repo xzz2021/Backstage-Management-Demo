@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  Int      @id @default(autoincrement())
+  username            String   @db.VarChar(50)
+  password            String   @db.VarChar(255)
+  avator              String?  @db.VarChar(255)
+  phone               String   @unique
+  status              Boolean  @default(true)
+  deleted             Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  deleteAt            DateTime?
+  role                Role? @relation(fields: [roleId], references: [id]) //  多对一
+  roleId              Int?   //  关联外键
+  department         Department? @relation(fields: [departmentsId], references: [id]) //  多对一
+  departmentsId       Int?   //  关联外键
+}
+
+
+model Role {
+  id                Int      @id @default(autoincrement())
+  name              String   @db.VarChar(50)
+  remark            String?   @db.VarChar(255)
+  status            Boolean  @default(true)
+  deleted           Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  deleteAt          DateTime?
+  users             User[]  //  一对多
+  menu              Json
+}
+
+
+model Department {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(50)
+  status      Boolean  @default(true)
+  remark      String?   @db.VarChar(255)
+  deleted     Boolean  @default(false)
+  parentId    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deleteAt    DateTime?
+  users       User[]  //  一对多
+}
+
+
+
+model Menu {
+  id                  Int      @id @default(autoincrement())
+  name                String   @db.VarChar(50)
+  path                String   @db.VarChar(255)
+  redirect            String?  @db.VarChar(255)
+  type                Int? // 当type=1时说明是子组件 而不是目录  用于回显菜单类型
+  component           String  
+  title               String?
+  sort                Int?  
+  parentId            Int?
+  status              Boolean  @default(true)
+  deleted             Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  deleteAt            DateTime?
+  meta                Meta?  // 此处为可选  是强制的 如果需要强制一对一  必须有meta  则可以将meta对应的定义调换
+                              //       meta                Menu @relation(fields: [metaId], references: [id]) //  一对一
+                              //       metaId              Int   @unique  //  关联外键  // 一对一
+  permissionList      PermissionList[] //  一对多
+}
+
+
+model Meta {
+  id                  Int      @id @default(autoincrement())
+  title               String?
+  icon                String?  
+  affix               Boolean  @default(false)
+  activeMenu          Boolean  @default(false)
+  alwaysShow          Boolean  @default(false)
+  breadcrumb          Boolean  @default(false)
+  canTo               Boolean  @default(false)
+  hidden              Boolean  @default(false)
+  noCache             Boolean  @default(false)
+  noTagsView          Boolean  @default(false)
+  deleted             Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  deleteAt            DateTime?
+  menu                Menu @relation(fields: [menuId], references: [id], onDelete: Cascade) //  一对一
+  menuId              Int   @unique  //  关联外键  // 一对一
+  permission          Json @default("[]") 
+}
+
+
+model PermissionList {
+  id          Int      @id @default(autoincrement())
+  nodeid      String   @db.VarChar(50)  // 前端id
+  label       String   @db.VarChar(50)
+  value       String   @db.VarChar(50)
+  deleted     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deleteAt    DateTime?
+  menuId      Int   //  关联外键
+  menu        Menu @relation(fields: [menuId], references: [id], onDelete: Cascade) //  多对一   //  Cascade 定义级联删除 当删除menu时会关联删除list
+  //menu      Menu? @relation(fields: [menuId], references: [id]) //  多对一   
+}
