@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UserinfoService } from './userinfo.service';
-import { CreateUserinfoDto, UpdateUserinfoDto } from './dto/userinfo.dto';
+import { AddUserinfoDto, CreateUserinfoDto, UpdateUserinfoDto } from './userinfo.dto';
 
 @Controller('userinfo')
 export class UserinfoController {
@@ -17,13 +17,23 @@ export class UserinfoController {
     return this.userinfoService.findAll(+pageSize, +pageIndex, searchParam);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserinfoDto: UpdateUserinfoDto) {
-    return this.userinfoService.update(+id, updateUserinfoDto);
+  @Post('add')
+  addUser(@Body() addUserinfoDto: AddUserinfoDto) {
+    return this.userinfoService.addUser(addUserinfoDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userinfoService.remove(+id);
+  @Post('update')
+  update(@Body() addUserinfoDto: AddUserinfoDto) {
+    return this.userinfoService.update(addUserinfoDto);
   }
+
+  //   @Patch(':id')
+  //   update(@Param('id') id: string, @Body() updateUserinfoDto: UpdateUserinfoDto) {
+  //     return this.userinfoService.update(+id, updateUserinfoDto);
+  //   }
+
+  //   @Delete(':id')
+  //   remove(@Param('id') id: string) {
+  //     return this.userinfoService.remove(+id);
+  //   }
 }

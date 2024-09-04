@@ -63,30 +63,7 @@ export class RoleService {
       // 2. Process each role
       const updatedRoles = await Promise.all(
         roles.map(async (role) => {
-          const permissionMap = {};
-          const menuIds = role.menu.map((menu) => {
-            if (menu?.permission) {
-              permissionMap[menu.id] = menu.permission;
-            }
-            return menu.id;
-          });
-
-          // Fetch menus with their meta and permissionList
-          const menus = await this.prisma.menu.findMany({
-            where: { id: { in: menuIds } },
-            include: { meta: true, permissionList: true }
-          });
-
-          // Update menu permissions
-          menus.forEach((menu) => {
-            const permission = permissionMap[menu.id];
-            if (permission) {
-              menu.meta.permission = permission;
-            }
-          });
-
-          role.menu = menus;
-          return role;
+          return await this.searchMenu(role);
         })
       );
 
@@ -95,6 +72,34 @@ export class RoleService {
       console.error('Error in findAll:', error);
       throw error;
     }
+  }
+
+  //  通过角色表信息 查询对应的实际菜单和相应按钮权限
+  async searchMenu(item) {
+    const permissionMap = {};
+    const menuIds = item.menu.map((menu) => {
+      if (menu?.permission) {
+        permissionMap[menu.id] = menu.permission;
+      }
+      return menu.id;
+    });
+
+    // Fetch menus with their meta and permissionList
+    const menus = await this.prisma.menu.findMany({
+      where: { id: { in: menuIds } },
+      include: { meta: true, permissionList: true }
+    });
+
+    // Update menu permissions
+    menus.forEach((menu) => {
+      const permission = permissionMap[menu.id];
+      if (permission) {
+        menu.meta.permission = permission;
+      }
+    });
+
+    item.menu = menus;
+    return item;
   }
 
   async findAllRole() {

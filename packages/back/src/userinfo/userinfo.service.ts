@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserinfoDto, UpdateUserinfoDto } from './dto/userinfo.dto';
+import { AddUserinfoDto, CreateUserinfoDto, UpdateUserinfoDto } from './userinfo.dto';
 // import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
@@ -58,8 +58,38 @@ export class UserinfoService {
     } catch (error) {}
   }
 
-  update(id: number, updateUserinfoDto: UpdateUserinfoDto) {
-    return `This action updates a #${id} userinfo`;
+  async addUser(addUserinfoDto: AddUserinfoDto) {
+    // const saltOrRounds = 10; // 数值越大速度越慢
+    // createUserinfo.password = await bcrypt.hash(createUserinfo.password, saltOrRounds);
+    // // const salt = await bcrypt.genSalt() // 用于生成salt
+    // // 应该要先查询下用户名是否存在,  存在 抛出异常提示
+    // const isExit = await this.prisma.user.findFirst({
+    //   where: {
+    //     phone: createUserinfo.phone
+    //   }
+    // });
+    // if (isExit?.id && createUserinfo.phone) {
+    //   return { code: 400, message: 'The phone number already exists' };
+    // }
+    // return
+    // 创建注册用户信息  存储
+    // try {
+    //   const userSave = await this.prisma.user.create({
+    //     data: createUserinfo,
+    //     select: {
+    //       id: true
+    //     }
+    //   });
+    //   return userSave;
+    // } catch (err) {
+    //   //  错误  抛出异常
+    //   const { code, sqlMessage } = err;
+    //   return { code, message: sqlMessage };
+    // }
+  }
+
+  update(addUserinfoDto: AddUserinfoDto) {
+    return `This action updates a serinfo`;
   }
 
   remove(id: number) {

@@ -26,8 +26,8 @@ model User {
   deleteAt            DateTime?
   role                Role? @relation(fields: [roleId], references: [id]) //  多对一
   roleId              Int?   //  关联外键
-  department         Department? @relation(fields: [departmentsId], references: [id]) //  多对一
-  departmentsId       Int?   //  关联外键
+  department          Department? @relation(fields: [departmentId], references: [id]) //  多对一
+  departmentId        Int?   //  关联外键
 }
 
 

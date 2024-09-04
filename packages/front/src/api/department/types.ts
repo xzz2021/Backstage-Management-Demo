@@ -13,7 +13,7 @@ export interface DepartmentListResponse {
 export interface DepartmentUserParams {
   pageSize: number
   pageIndex: number
-  id: number
+  id: number | undefined
   username?: string
   account?: string
 }

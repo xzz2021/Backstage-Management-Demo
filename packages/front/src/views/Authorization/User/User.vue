@@ -4,19 +4,14 @@ import { useI18n } from '@/hooks/web/useI18n'
 import { Table } from '@/components/Table'
 import { ref, unref, nextTick, watch, reactive } from 'vue'
 import { ElTree, ElInput, ElDivider } from 'element-plus'
-import {
-  getUserByIdApi,
-  saveUserApi,
-  deleteUserByIdApi,
-  getAllDepartmentListApi
-} from '@/api/department'
+import { getUserByIdApi, saveUserApi, deleteUserByIdApi } from '@/api/department'
 import type { DepartmentItem, DepartmentUserItem } from '@/api/department/types'
 import { useTable } from '@/hooks/web/useTable'
 import { Search } from '@/components/Search'
 import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
-import { getAllRoleApi, getRoleListApi, getRoleListApi2 } from '@/api/role'
+import { getAllRoleApi } from '@/api/role'
 import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
 import { BaseButton } from '@/components/Button'
 
@@ -290,6 +285,8 @@ const saveLoading = ref(false)
 const save = async () => {
   const write = unref(writeRef)
   const formData = await write?.submit()
+  console.log('🚀 ~ xzz: save -> formData', formData)
+  return
   if (formData) {
     saveLoading.value = true
     try {
