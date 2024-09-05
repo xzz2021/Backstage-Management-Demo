@@ -142,22 +142,26 @@ export class RoleService {
       });
       return res;
     }
-    if (user.roleId == null) {
+    if (user.curRoleId == null) {
       // 用户未分配角色
       return [];
     }
     //  获取到 角色 所拥有 的 路由
-    const menuList = await this.getMenuByRole(user.roleId);
+    const menuList = await this.getMenuByRole(user.curRoleId);
     return menuList;
   }
 
   async getMenuByRole(roleId) {
-    if (!roleId) return [];
     // 获取权限路由id关联菜单表的json数据
-    const roleData = await this.prisma.role.findUnique({
+    //  1. 先获取所有菜单
+    // 2.  获取对应权限
+    const roleMenuData = await this.prisma.role.findUnique({
       where: { id: roleId },
       select: { menu: true }
     });
+    // roles.map(async (role) => {
+    //   return await this.searchMenu(role);
+    // })
     return [];
     // const roleMenu = JSON.parse(roleData.menu) as rawMenuType[];
     // console.log('🚀 ~ xzz: RoleService -> getMenuByRole -> roleMenu', roleMenu);

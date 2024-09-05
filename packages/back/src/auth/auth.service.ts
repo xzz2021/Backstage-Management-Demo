@@ -16,19 +16,17 @@ export class AuthService {
         roles: true
       }
     });
-    console.log('🚀 ~ xzz: AuthService -> user', user);
     const isMatch = await bcrypt.compare(pwd, user.password);
     if (!isMatch) throw new NotFoundException('用户名或密码错误');
 
     const { username, phone, curRoleId, avator, id, roles } = user;
     const curId = roles ? roles[0].roleId : curRoleId;
-    const payload = { id, username, phone, curRoleId };
+    const payload = { id, username, phone, curRoleId: curId };
+    // 登陆时 要给payload 定义好  默认的角色身份 curRoleId
     return {
       username,
       phone,
-      curRoleId: curId,
       avator,
-      roles,
       id,
       access_token: this.jwtService.sign(payload)
     };

@@ -45,7 +45,7 @@ export const registerApi2 = (data: UserRegisterType): Promise<IResponse<UserType
 
 //  这里是 用户登录后  拿到 角色   根据已分配好的菜单及权限  获取当前 角色所拥有的菜单
 export const getRoleMenuApi2 = (): Promise<IResponse<AppCustomRouteRecordRaw[]>> => {
-  return request.get({ url: 'api/role/getMenu' })
+  return request.get({ url: 'api/role/getRoleMenu' })
 }
 
 //  检查token是否过期
