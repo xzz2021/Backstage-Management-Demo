@@ -129,7 +129,6 @@ export class UserinfoService {
   }
 
   async addUser(addUserinfoDto: AddUserinfoDto) {
-    console.log('🚀 ~ xzz: addUser -> addUserinfoDto', addUserinfoDto);
     const { departmentId, roles, phone, username } = addUserinfoDto;
     const saltOrRounds = 10; // 数值越大速度越慢
     try {
@@ -175,7 +174,6 @@ export class UserinfoService {
   }
 
   async update(updateUserinfoDto: UpdateUserinfoDto) {
-    console.log('🚀 ~ xzz: addUser -> addUserinfoDto', updateUserinfoDto);
     const { id, departmentId, roles, phone, username } = updateUserinfoDto;
     try {
       //  修改用户信息
@@ -201,7 +199,6 @@ export class UserinfoService {
         });
         return res;
       });
-      console.log('🚀 ~ xzz: update -> userSave', userSave);
       return userSave;
       // const idx = userSave?.id;
       // if (idx) return userSave;
@@ -211,7 +208,24 @@ export class UserinfoService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} userinfo`;
+  async remove(id: number) {
+    // 1. 删除用户
+    // 2. 删除userRole 关联数据
+    try {
+      const delData = await this.prisma.$transaction(async (prisma) => {
+        await prisma.userRole.deleteMany({ where: { userId: id } });
+        const res = await prisma.user.delete({
+          where: { id },
+          select: {
+            id: true
+          }
+        });
+        return res;
+      });
+      if (delData?.id) return delData;
+    } catch (error) {
+      console.log('🚀 ~ xzz: remove -> error', error);
+      return { code: 400, error: error.message };
+    }
   }
 }

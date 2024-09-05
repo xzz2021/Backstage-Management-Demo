@@ -21,7 +21,7 @@ export const getRoleListApi2 = () => {
   return request.get({ url: '/api/role/list' })
 }
 
-//  只返回简单的角色列表  供 下拉选择
+//  只返回简单的角色列表  供 用户管理模块 下拉选择
 export const getAllRoleApi = () => {
   return request.get({ url: '/api/role/rolelist' })
 }

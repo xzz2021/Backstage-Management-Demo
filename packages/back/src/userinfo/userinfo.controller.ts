@@ -39,6 +39,11 @@ export class UserinfoController {
     return this.userinfoService.update(updateUserinfoDto);
   }
 
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.userinfoService.remove(+id);
+  }
+
   //   @Patch(':id')
   //   update(@Param('id') id: string, @Body() updateUserinfoDto: UpdateUserinfoDto) {
   //     return this.userinfoService.update(+id, updateUserinfoDto);

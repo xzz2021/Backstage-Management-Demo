@@ -13,7 +13,7 @@ export class RoleController {
   // }
 
   @UseGuards(AuthGuard) //  只有进过了AuthGuard 才能拿到token解析出的 用户信息
-  @Get('getMenu')
+  @Get('getRoleMenu')
   roleMenu(@Req() req: any) {
     const user = req.user;
     return this.roleService.getRoleMenu(user);
@@ -29,6 +29,7 @@ export class RoleController {
     return this.roleService.update(updateRoleDto);
   }
 
+  // 带有权限的列表
   @Get('list')
   findAll() {
     return this.roleService.findAll();

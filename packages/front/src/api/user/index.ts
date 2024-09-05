@@ -64,6 +64,10 @@ export const editUserApi = (data) => {
   return request.post({ url: '/api/user/update', data })
 }
 
+export const delUserApi = (id: number) => {
+  return request.delete({ url: '/api/user/' + id })
+}
+
 interface DetailUserResponse {
   department: { id: number; name: string }
   roles: { id: number; name: string }[]

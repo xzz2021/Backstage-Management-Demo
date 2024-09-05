@@ -277,7 +277,6 @@ const getRole = async () => {
       // 若没有路由 就使用默认路由
       treeRouters = defaultRouter
     }
-    console.log('🚀 ~ xzz: getRole -> treeRouters', treeRouters)
     userStore.setRoleRouters(treeRouters)
     await permissionStore.generateRoutes(treeRouters).catch(() => {}) // 合并生成路由
     permissionStore.getAddRouters.forEach((route) => {

@@ -16,7 +16,13 @@ import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
 import { BaseButton } from '@/components/Button'
 
 import { useDepartmentStore } from '@/store/modules/department'
-import { addUserApi, editUserApi, getUserByDepartmentIdApi, getUserByIdApi2 } from '@/api/user'
+import {
+  addUserApi,
+  delUserApi,
+  editUserApi,
+  getUserByDepartmentIdApi,
+  getUserByIdApi2
+} from '@/api/user'
 
 const departmentStore = useDepartmentStore()
 
@@ -191,7 +197,6 @@ const crudSchemas = reactive<CrudSchema[]>([
       //  不生效
       slots: {
         default: (data: any) => {
-          console.log('🚀 ~ xzz: data', data)
           return <>{data?.roleArr.map((v) => v.name).join(',')}</>
         }
       }
@@ -256,7 +261,7 @@ const crudSchemas = reactive<CrudSchema[]>([
               <BaseButton type="success" onClick={() => action(row, 'detail')}>
                 {t('exampleDemo.detail')}
               </BaseButton>
-              <BaseButton type="danger" onClick={() => delData(row)}>
+              <BaseButton type="danger" onClick={() => delAction(row.id)}>
                 {t('exampleDemo.del')}
               </BaseButton>
             </>
@@ -344,9 +349,12 @@ const delData = async (row?: DepartmentUserItem) => {
 
 // }
 
+// const detailLoading = ref(false)
+// const editLoading = ref(false)
 const action = async (row: DepartmentUserItem, type: string) => {
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
+  // type === 'edit' ? (editLoading.value = true) : (detailLoading.value = true)
   try {
     //   详细数据应当通过单个ip去查询处理
     const res = await getUserByIdApi2({ id: row.id })
@@ -356,11 +364,13 @@ const action = async (row: DepartmentUserItem, type: string) => {
       departmentId: userDetail?.department?.id, // id 用于下拉回显
       roles: userDetail.roles.map((v) => v.id), // id数组用于下拉回显
       roleArr: JSON.parse(JSON.stringify(userDetail.roles)), // 用于详情页展示
-      department: unref(treeEl)?.getCurrentNode() || {}
+      department: unref(treeEl)?.getCurrentNode() || {} // id 用于表单下拉数据
     } //getCurrentNode返回当前被选中节点的数据
     dialogVisible.value = true
   } catch (error) {
     console.log('🚀 ~ xzz: action -> error', error)
+  } finally {
+    // type === 'edit' ? (editLoading.value = false) : (detailLoading.value = false)
   }
   // unref(treeSelectRef)?.setCheckedKeys([row.department.id], true) //  自动选中相应部门
   // unref(treeSelectRef)?.setCurrentKey(row.department.id) //  自动选中相应部
@@ -396,6 +406,21 @@ const save = async () => {
     } finally {
       saveLoading.value = false
     }
+  }
+}
+
+const delAction = async (idx: number) => {
+  try {
+    const res = await delUserApi(idx)
+    const id = res?.data?.id
+    if (id) {
+      dialogVisible.value = false
+      ElMessage.success('删除成功!')
+      getList()
+    }
+  } catch (error) {
+    console.log('xzz: delAction -> error', error)
+    ElMessage.error('删除失败!')
   }
 }
 </script>
