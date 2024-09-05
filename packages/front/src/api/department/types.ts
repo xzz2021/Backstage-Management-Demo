@@ -21,14 +21,12 @@ export interface DepartmentUserParams {
 export interface DepartmentUserItem {
   id: number
   username: string
-  account: string
-  email: string
-  createTime: string
+  phone: string
+  createdAt: string
   roles: any[]
   roleArr?: any[]
   role: string
   departmentId?: number
-
   department: DepartmentItem
 }
 

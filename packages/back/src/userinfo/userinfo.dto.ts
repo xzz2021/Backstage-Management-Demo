@@ -21,3 +21,9 @@ export class AddUserinfoDto extends PartialType(CreateUserinfoDto) {
   roles?: number[];
   departmentId?: number;
 }
+
+export class ResetPwdDto {
+  newPwd: string;
+  id: number;
+  phone: string;
+}

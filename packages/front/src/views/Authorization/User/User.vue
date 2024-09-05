@@ -21,7 +21,8 @@ import {
   delUserApi,
   editUserApi,
   getUserByDepartmentIdApi,
-  getUserByIdApi2
+  getUserByIdApi2,
+  resetPasswordApi
 } from '@/api/user'
 
 const departmentStore = useDepartmentStore()
@@ -53,6 +54,34 @@ const { total, loading, dataList, pageSize, currentPage } = tableState
 const { getList, getElTableExpose, delList } = tableMethods
 const treeSelectRef = ref<typeof ElTree>()
 
+const getResetTime = ref(99)
+const resetPwding = ref(false)
+const newPwd = ref('')
+const resetPwd = async () => {
+  resetPwding.value = true
+  const timer = setInterval(() => {
+    getResetTime.value--
+    if (getResetTime.value <= 0) {
+      clearInterval(timer)
+      getResetTime.value = 60
+      resetPwding.value = false
+    }
+  }, 1000)
+  //  发起后端请求
+  try {
+    if (currentRow.value) {
+      const { id, phone } = currentRow.value
+      const res = await resetPasswordApi({ id, phone, newPwd: newPwd.value.trim() || '123456' })
+      const idx = res?.data?.id
+      if (idx) {
+        return ElMessage.success('重置成功!')
+      }
+    }
+    return ElMessage.error('重置失败!')
+  } catch (error) {
+    console.log('🚀 ~ xzz: resetPwd -> error', error)
+  }
+}
 const crudSchemas = reactive<CrudSchema[]>([
   {
     field: 'selection',
@@ -122,6 +151,86 @@ const crudSchemas = reactive<CrudSchema[]>([
       hidden: true
     }
   },
+
+  {
+    field: 'roles',
+    label: t('userDemo.role'),
+    search: {
+      hidden: true
+    },
+    table: {
+      hidden: true,
+      slots: {
+        default: (data: any) => {
+          return <>{data?.row?.roles.map((v) => v.name).join(',')}</>
+        }
+      }
+    },
+    detail: {
+      //  不生效
+      slots: {
+        default: (data: any) => {
+          return <>{data?.roleArr.map((v) => v.name).join(',')}</>
+        }
+      }
+    },
+    form: {
+      component: 'Select',
+      // value: 'roles.id',
+      // value: (data: any) => {
+      //   console.log('🚀 ~ xzz: data', data)
+      //   return data?.roles
+      // },
+      componentProps: {
+        // 'value-key': 'name',
+        multiple: true,
+        collapseTags: true,
+        maxCollapseTags: 1
+      },
+      optionApi: async () => {
+        const res = await getAllRoleApi()
+        return res.data?.list?.map((v) => ({
+          label: v.name,
+          value: v.id
+        }))
+      }
+    }
+  },
+  {
+    field: 'resetPwd',
+    form: {
+      formItemProps: {
+        slots: {
+          default: (data) => {
+            if (!data?.id) return null
+            return (
+              <div class="w-[100%] flex mt-60">
+                <ElInput v-model={newPwd.value} placeholder="请输入重置密码,默认为123456" />
+                <BaseButton
+                  type="primary"
+                  disabled={unref(resetPwding)}
+                  class="ml-10px"
+                  onClick={resetPwd}
+                >
+                  重置密码
+                  {unref(resetPwding) ? `(${unref(getResetTime)})` : ''}
+                </BaseButton>
+              </div>
+            )
+          }
+        }
+      }
+    },
+    search: {
+      hidden: true
+    },
+    detail: {
+      hidden: true
+    },
+    table: {
+      hidden: true
+    }
+  },
   {
     field: 'department',
     label: t('userDemo.department'),
@@ -180,50 +289,6 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    field: 'roles',
-    label: t('userDemo.role'),
-    search: {
-      hidden: true
-    },
-    table: {
-      hidden: true,
-      slots: {
-        default: (data: any) => {
-          return <>{data?.row?.roles.map((v) => v.name).join(',')}</>
-        }
-      }
-    },
-    detail: {
-      //  不生效
-      slots: {
-        default: (data: any) => {
-          return <>{data?.roleArr.map((v) => v.name).join(',')}</>
-        }
-      }
-    },
-    form: {
-      component: 'Select',
-      // value: 'roles.id',
-      // value: (data: any) => {
-      //   console.log('🚀 ~ xzz: data', data)
-      //   return data?.roles
-      // },
-      componentProps: {
-        // 'value-key': 'name',
-        multiple: true,
-        collapseTags: true,
-        maxCollapseTags: 1
-      },
-      optionApi: async () => {
-        const res = await getAllRoleApi()
-        return res.data?.list?.map((v) => ({
-          label: v.name,
-          value: v.id
-        }))
-      }
-    }
-  },
-  {
     field: 'createdAt',
     label: t('userDemo.createTime'),
     // form: {
@@ -253,6 +318,7 @@ const crudSchemas = reactive<CrudSchema[]>([
       slots: {
         default: (data: any) => {
           const row = data.row as DepartmentUserItem
+
           return (
             <>
               <BaseButton type="primary" onClick={() => action(row, 'edit')}>

@@ -5,7 +5,7 @@ import { PropType, reactive, watch } from 'vue'
 import { DepartmentUserItem } from '@/api/department/types'
 import { useValidator } from '@/hooks/web/useValidator'
 
-const { required } = useValidator()
+const { required, phone } = useValidator()
 
 const props = defineProps({
   currentRow: {
@@ -19,8 +19,8 @@ const props = defineProps({
 })
 
 const rules = reactive({
-  username: [required()],
-  phone: [required()]
+  username: [required(), { min: 2, max: 16, message: '用户名称长度需要2-16位' }],
+  phone: [required(), phone()]
   // 'department.id': [required()]
 })
 

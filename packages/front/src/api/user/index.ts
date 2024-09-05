@@ -76,3 +76,10 @@ interface DetailUserResponse {
 export const getUserByIdApi2 = (params: { id: number }) => {
   return request.get<DetailUserResponse>({ url: '/api/user/detailById', params })
 }
+
+interface IdResponse {
+  id: number
+}
+export const resetPasswordApi = (data) => {
+  return request.post<IdResponse>({ url: '/api/user/resetPassword', data })
+}

@@ -26,7 +26,9 @@ const { t } = useI18n()
 
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
-    const res = await getRoleListApi2() //  获取的是 for循环模拟处理的数据  没有permission 也没有permissionList
+    const res = await getRoleListApi2()
+    // 1. 获取的是 for循环模拟处理的数据  没有permission 也没有permissionList
+    // 2. 详细菜单权限数据 转移到打开瞬间 查询
     // console.log('🚀 ~ xzz: res', res?.data?.list)
     //  此处list需要转换成带children的嵌套结构
     // return {

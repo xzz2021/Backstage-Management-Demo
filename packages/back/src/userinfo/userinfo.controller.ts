@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UserinfoService } from './userinfo.service';
-import { AddUserinfoDto, CreateUserinfoDto, UpdateUserinfoDto } from './userinfo.dto';
+import { AddUserinfoDto, CreateUserinfoDto, ResetPwdDto, UpdateUserinfoDto } from './userinfo.dto';
 
 @Controller('user')
 export class UserinfoController {
@@ -35,8 +35,12 @@ export class UserinfoController {
 
   @Post('update')
   update(@Body() updateUserinfoDto: UpdateUserinfoDto) {
-    console.log('🚀 ~ xzz: update');
     return this.userinfoService.update(updateUserinfoDto);
+  }
+
+  @Post('resetPassword')
+  resetPassword(@Body() resetPwdDto: ResetPwdDto) {
+    return this.userinfoService.resetPassword(resetPwdDto);
   }
 
   @Delete(':id')

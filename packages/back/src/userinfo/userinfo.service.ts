@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AddUserinfoDto, CreateUserinfoDto, UpdateUserinfoDto } from './userinfo.dto';
+import { AddUserinfoDto, CreateUserinfoDto, ResetPwdDto, UpdateUserinfoDto } from './userinfo.dto';
 // import { PrismaService } from '../prisma/prisma.service';
 // import { Prisma } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
@@ -225,6 +225,27 @@ export class UserinfoService {
       if (delData?.id) return delData;
     } catch (error) {
       console.log('🚀 ~ xzz: remove -> error', error);
+      return { code: 400, error: error.message };
+    }
+  }
+
+  async resetPassword(resetPwdDto: ResetPwdDto) {
+    const { id, phone, newPwd = '123456' } = resetPwdDto;
+    try {
+      //  修改用户密码
+      const newPassword = await bcrypt.hash(newPwd, 10);
+      const res = await this.prisma.user.update({
+        where: { id, phone },
+        data: {
+          password: newPassword
+        },
+        select: {
+          id: true
+        }
+      });
+      if (res?.id) return res;
+    } catch (error) {
+      console.log(' ~ xzz: UserinfoService -> addUser -> error', error);
       return { code: 400, error: error.message };
     }
   }

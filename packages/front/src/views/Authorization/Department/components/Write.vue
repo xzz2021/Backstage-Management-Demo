@@ -5,11 +5,10 @@ import { PropType, reactive, watch } from 'vue'
 import { useValidator } from '@/hooks/web/useValidator'
 import { DepartmentItem } from '@/api/department/types'
 import { useI18n } from '@/hooks/web/useI18n'
-import { getDepartmentApi } from '@/api/department'
 import { useDepartmentStore } from '@/store/modules/department'
 
 const departmentStore = useDepartmentStore()
-const { required } = useValidator()
+const { required, phone } = useValidator()
 
 const { t } = useI18n()
 
@@ -81,7 +80,7 @@ const writeSchemas = reactive<FormSchema[]>([
 
 const rules = reactive({
   // id: [required()],
-  name: [required()],
+  name: [required(), phone()],
   status: [required()]
 })
 
