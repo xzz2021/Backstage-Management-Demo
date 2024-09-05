@@ -7,7 +7,6 @@ export class AuthController {
 
   @Post('login')
   signIn(@Body() signInDto: UserLoginDto) {
-    console.log('🚀 ~ xzz: AuthController -> signIn -> signInDto', signInDto);
     const { phone, password } = signInDto;
     return this.authService.signIn(phone, password);
   }

@@ -11,9 +11,13 @@ export class CreateUserinfoDto {
   phone: string;
 }
 
-export class UpdateUserinfoDto extends PartialType(CreateUserinfoDto) {}
+export class UpdateUserinfoDto extends PartialType(CreateUserinfoDto) {
+  id: number;
+  roles?: number[];
+  departmentId?: number;
+}
 
 export class AddUserinfoDto extends PartialType(CreateUserinfoDto) {
-  roleId: number;
-  departmentId: number;
+  roles?: number[];
+  departmentId?: number;
 }

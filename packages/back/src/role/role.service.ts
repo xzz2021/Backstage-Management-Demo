@@ -104,11 +104,8 @@ export class RoleService {
 
   async findAllRole() {
     try {
-      // 1. Fetch all roles
       const roles = (await this.prisma.role.findMany()) as any[];
-
       const total = await this.prisma.role.count();
-
       return { list: roles, total };
     } catch (error) {
       console.error('Error in findAll:', error);

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { UserinfoService } from './userinfo.service';
 import { AddUserinfoDto, CreateUserinfoDto, UpdateUserinfoDto } from './userinfo.dto';
 
-@Controller('userinfo')
+@Controller('user')
 export class UserinfoController {
   constructor(private readonly userinfoService: UserinfoService) {}
 
@@ -17,14 +17,26 @@ export class UserinfoController {
     return this.userinfoService.findAll(+pageSize, +pageIndex, searchParam);
   }
 
+  @Get('listByDepartmentId')
+  findBy(@Query() joinQueryParams: { [string: string]: any }) {
+    const { pageSize = 10, pageIndex = 1, id, ...searchParam } = joinQueryParams;
+    return this.userinfoService.findByDepartmentId(+pageSize, +pageIndex, +id, searchParam);
+  }
+
+  @Get('detailById')
+  findDetailById(@Query() param: { id: string }) {
+    return this.userinfoService.findDetailById(+param?.id);
+  }
+
   @Post('add')
   addUser(@Body() addUserinfoDto: AddUserinfoDto) {
     return this.userinfoService.addUser(addUserinfoDto);
   }
 
   @Post('update')
-  update(@Body() addUserinfoDto: AddUserinfoDto) {
-    return this.userinfoService.update(addUserinfoDto);
+  update(@Body() updateUserinfoDto: UpdateUserinfoDto) {
+    console.log('🚀 ~ xzz: update');
+    return this.userinfoService.update(updateUserinfoDto);
   }
 
   //   @Patch(':id')

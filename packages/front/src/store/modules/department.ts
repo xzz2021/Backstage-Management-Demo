@@ -32,7 +32,6 @@ export const useDepartmentStore = defineStore('department', {
     },
     async setAllDepartmentList() {
       const res = await getAllDepartmentListApi()
-      console.log('🚀 ~ xzz: setAllDepartmentList -> res', res)
       this.allDepartmentList = buildTree(res?.data?.list) || []
       return { list: this.allDepartmentList }
     }

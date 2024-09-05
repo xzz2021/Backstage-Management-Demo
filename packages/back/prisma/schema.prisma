@@ -4,6 +4,7 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// prisma 可以隐式定义 多对多关系  相互间使用[]即可   如  user[]  tag[]  单位了更好的管理维护  最好显式声明
 generator client {
   provider = "prisma-client-js"
 }
@@ -24,10 +25,13 @@ model User {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   deleteAt            DateTime?
-  role                Role? @relation(fields: [roleId], references: [id]) //  多对一
-  roleId              Int?   //  关联外键
+  // role                Role? @relation(fields: [roleId], references: [id]) //  多对一
+  // roleId              Int?   //  关联外键
+  curRoleId              Int?   //   当前用户角色身份
+  roles               UserRole[]
   department          Department? @relation(fields: [departmentId], references: [id]) //  多对一
   departmentId        Int?   //  关联外键
+  // userRoles            UserRole[]
 }
 
 
@@ -40,8 +44,21 @@ model Role {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   deleteAt          DateTime?
-  users             User[]  //  一对多
+  users             UserRole[]  //  多对多
   menu              Json
+  // userRoles            UserRole[]
+}
+
+// 显式定义用户和角色多对多的关系   这里定义无效   prisma会生成_RoleToUser表
+model UserRole {
+  user              User @relation(fields: [userId], references: [id])
+  userId            Int
+  role              Role @relation(fields: [roleId], references: [id])
+  roleId            Int
+  assignedAt        DateTime @default(now())
+  assignedBy        String?
+
+  @@id([userId,roleId])     // 复合主键id
 }
 
 
@@ -117,3 +134,4 @@ model PermissionList {
   menu        Menu @relation(fields: [menuId], references: [id], onDelete: Cascade) //  多对一   //  Cascade 定义级联删除 当删除menu时会关联删除list
   //menu      Menu? @relation(fields: [menuId], references: [id]) //  多对一   
 }
+

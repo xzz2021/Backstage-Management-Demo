@@ -51,6 +51,24 @@ export const delMenuApi2 = (id) => {
   return request.delete({ url: '/api/menu/' + id })
 }
 
+// 根据 部门id 进行分页查询
 export const getUserByDepartmentIdApi = (params: DepartmentUserParams) => {
-  return request.get<DepartmentUserResponse>({ url: '/api/department/users', params })
+  return request.get<DepartmentUserResponse>({ url: '/api/user/listByDepartmentId', params })
+}
+
+export const addUserApi = (data) => {
+  return request.post({ url: '/api/user/add', data })
+}
+
+export const editUserApi = (data) => {
+  return request.post({ url: '/api/user/update', data })
+}
+
+interface DetailUserResponse {
+  department: { id: number; name: string }
+  roles: { id: number; name: string }[]
+}
+
+export const getUserByIdApi2 = (params: { id: number }) => {
+  return request.get<DetailUserResponse>({ url: '/api/user/detailById', params })
 }

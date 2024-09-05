@@ -3,8 +3,8 @@ import { ContentWrap } from '@/components/ContentWrap'
 import { useI18n } from '@/hooks/web/useI18n'
 import { Table } from '@/components/Table'
 import { ref, unref, nextTick, watch, reactive } from 'vue'
-import { ElTree, ElInput, ElDivider } from 'element-plus'
-import { getUserByIdApi, saveUserApi, deleteUserByIdApi } from '@/api/department'
+import { ElTree, ElInput, ElDivider, ElMessage } from 'element-plus'
+import { deleteUserByIdApi } from '@/api/department'
 import type { DepartmentItem, DepartmentUserItem } from '@/api/department/types'
 import { useTable } from '@/hooks/web/useTable'
 import { Search } from '@/components/Search'
@@ -16,6 +16,7 @@ import { CrudSchema, useCrudSchemas } from '@/hooks/web/useCrudSchemas'
 import { BaseButton } from '@/components/Button'
 
 import { useDepartmentStore } from '@/store/modules/department'
+import { addUserApi, editUserApi, getUserByDepartmentIdApi, getUserByIdApi2 } from '@/api/user'
 
 const departmentStore = useDepartmentStore()
 
@@ -24,7 +25,8 @@ const { t } = useI18n()
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
     const { pageSize, currentPage } = tableState
-    const res = await getUserByIdApi({
+    // 根据 部门id 进行分页查询
+    const res = await getUserByDepartmentIdApi({
       id: unref(currentNodeKey),
       pageIndex: unref(currentPage),
       pageSize: unref(pageSize),
@@ -38,10 +40,12 @@ const { tableRegister, tableState, tableMethods } = useTable({
   fetchDelApi: async () => {
     const res = await deleteUserByIdApi(unref(ids))
     return !!res
-  }
+  },
+  immediate: false
 })
 const { total, loading, dataList, pageSize, currentPage } = tableState
 const { getList, getElTableExpose, delList } = tableMethods
+const treeSelectRef = ref<typeof ElTree>()
 
 const crudSchemas = reactive<CrudSchema[]>([
   {
@@ -84,15 +88,10 @@ const crudSchemas = reactive<CrudSchema[]>([
     label: t('login.phone')
   },
   {
-    field: 'department.id',
+    field: 'departmentId',
     label: t('userDemo.department'),
     detail: {
       hidden: true
-      // slots: {
-      //   default: (data: DepartmentUserItem) => {
-      //     return <>{data.department.name}</>
-      //   }
-      // }
     },
     search: {
       hidden: true
@@ -100,6 +99,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     form: {
       component: 'TreeSelect',
       componentProps: {
+        // value: 'department.id',
         nodeKey: 'id',
         props: {
           label: 'name'
@@ -117,15 +117,94 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    field: 'role',
+    field: 'department',
+    label: t('userDemo.department'),
+    // form: {
+    //   hidden: true
+    // },
+    form: {
+      hidden: true,
+      component: 'TreeSelect',
+      componentProps: {
+        ref: 'treeSelectRef',
+        // value: 'department.id',
+        // data: 'department',
+        nodeKey: 'id',
+        'value-key': 'id',
+        'value-format': 'object',
+        on: {
+          change: (_val) => {
+            unref(treeSelectRef)?.setCurrentKey([_val])
+          }
+        },
+        props: {
+          label: 'name',
+          children: 'children'
+
+          // value: 'id'
+        }
+        // highlightCurrent: true,
+        // expandOnClickNode: true,
+        // checkStrictly: true,
+        // checkOnClickNode: true,
+        // clearable: true,
+        // currentNodeKey: 'department.id'
+      },
+      optionApi: async () => {
+        return await departmentStore.getAllDepartmentList
+      }
+    },
+    search: {
+      hidden: true
+    },
+    detail: {
+      slots: {
+        default: (data: any) => {
+          return <>{data?.department?.name}</>
+        }
+      }
+    },
+    table: {
+      hidden: true,
+      slots: {
+        default: (data: any) => {
+          return <>{data?.row?.department?.name}</>
+        }
+      }
+    }
+  },
+  {
+    field: 'roles',
     label: t('userDemo.role'),
     search: {
       hidden: true
     },
+    table: {
+      hidden: true,
+      slots: {
+        default: (data: any) => {
+          return <>{data?.row?.roles.map((v) => v.name).join(',')}</>
+        }
+      }
+    },
+    detail: {
+      //  不生效
+      slots: {
+        default: (data: any) => {
+          console.log('🚀 ~ xzz: data', data)
+          return <>{data?.roleArr.map((v) => v.name).join(',')}</>
+        }
+      }
+    },
     form: {
       component: 'Select',
-      value: [],
+      // value: 'roles.id',
+      // value: (data: any) => {
+      //   console.log('🚀 ~ xzz: data', data)
+      //   return data?.roles
+      // },
       componentProps: {
+        // 'value-key': 'name',
         multiple: true,
         collapseTags: true,
         maxCollapseTags: 1
@@ -140,17 +219,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    field: 'email',
-    label: t('userDemo.email'),
-    form: {
-      component: 'Input'
-    },
-    search: {
-      hidden: true
-    }
-  },
-  {
-    field: 'createTime',
+    field: 'createdAt',
     label: t('userDemo.createTime'),
     // form: {
     //   component: 'Input'
@@ -209,17 +278,19 @@ const setSearchParams = (params: any) => {
 
 const treeEl = ref<typeof ElTree>()
 
-const currentNodeKey = ref<number | undefined>()
+const currentNodeKey = ref<number>(0)
 const departmentList = ref<DepartmentItem[]>([])
 const fetchDepartment = async () => {
   // const res = await getDepartmentApi()
   const res = await departmentStore.setAllDepartmentList()
   const list = res.list || []
   departmentList.value = list
-  currentNodeKey.value = list[0] && list[0]?.children && list[0].children[0].id
+  // currentNodeKey.value = (list[0] && list[0]?.children && list[0].children[0].id) || 0
+  currentNodeKey.value = (list[0] && list[0].id) || 0
   await nextTick()
   unref(treeEl)?.setCurrentKey(currentNodeKey.value)
 }
+
 fetchDepartment()
 
 const currentDepartment = ref('')
@@ -269,13 +340,30 @@ const delData = async (row?: DepartmentUserItem) => {
     delLoading.value = false
   })
 }
+// const getUserInfo = async (id) => {
 
-const action = (row: DepartmentUserItem, type: string) => {
+// }
+
+const action = async (row: DepartmentUserItem, type: string) => {
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
-  currentRow.value = { ...row, department: unref(treeEl)?.getCurrentNode() || {} } //getCurrentNode返回当前被选中节点的数据
-  console.log('🚀 ~ xzz: action -> currentRow.value', currentRow.value)
-  dialogVisible.value = true
+  try {
+    //   详细数据应当通过单个ip去查询处理
+    const res = await getUserByIdApi2({ id: row.id })
+    const userDetail = res?.data
+    currentRow.value = {
+      ...row,
+      departmentId: userDetail?.department?.id, // id 用于下拉回显
+      roles: userDetail.roles.map((v) => v.id), // id数组用于下拉回显
+      roleArr: JSON.parse(JSON.stringify(userDetail.roles)), // 用于详情页展示
+      department: unref(treeEl)?.getCurrentNode() || {}
+    } //getCurrentNode返回当前被选中节点的数据
+    dialogVisible.value = true
+  } catch (error) {
+    console.log('🚀 ~ xzz: action -> error', error)
+  }
+  // unref(treeSelectRef)?.setCheckedKeys([row.department.id], true) //  自动选中相应部门
+  // unref(treeSelectRef)?.setCurrentKey(row.department.id) //  自动选中相应部
 }
 
 const writeRef = ref<ComponentRef<typeof Write>>()
@@ -285,21 +373,28 @@ const saveLoading = ref(false)
 const save = async () => {
   const write = unref(writeRef)
   const formData = await write?.submit()
-  console.log('🚀 ~ xzz: save -> formData', formData)
-  return
+  console.log('🚀 ~ xzz: save -> formData', JSON.parse(JSON.stringify(formData)))
+  // return
+  const isEdit = actionType.value === 'edit' //  判断时修改还是新增
   if (formData) {
-    saveLoading.value = true
     try {
-      const res = await saveUserApi(formData)
-      if (res) {
+      // formData.departmentId = formData?.department?.id || null
+      delete formData?.department
+      delete formData?.roleArr
+      //  提交 新增 或者 修改
+      saveLoading.value = true
+      const res = isEdit ? await editUserApi(formData) : await addUserApi(formData)
+      const id = res?.data?.id
+      if (id) {
+        dialogVisible.value = false
+        ElMessage.success('更新成功!')
         currentPage.value = 1
         getList()
       }
     } catch (error) {
-      console.log(error)
+      console.log('🚀 ~ xzz: save -> error', error)
     } finally {
       saveLoading.value = false
-      dialogVisible.value = false
     }
   }
 }

@@ -46,7 +46,7 @@ export const editDepartmentApi = (data) => {
 export const getAllDepartmentListApi = () => {
   return request.get<DepartmentListResponse>({ url: '/api/department/alllist' })
 }
-
+//  此处后端合并了处理分页查询和 带id过滤的分页查询
 export const getDepartmentListApi2 = (params: any) => {
   return request.get<DepartmentListResponse>({ url: '/api/department/list', params })
 }

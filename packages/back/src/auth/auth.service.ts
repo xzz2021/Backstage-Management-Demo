@@ -11,18 +11,24 @@ export class AuthService {
 
   async signIn(pho: string, pwd: string): Promise<any> {
     const user = await this.prisma.user.findUnique({
-      where: { phone: pho }
+      where: { phone: pho },
+      include: {
+        roles: true
+      }
     });
+    console.log('🚀 ~ xzz: AuthService -> user', user);
     const isMatch = await bcrypt.compare(pwd, user.password);
     if (!isMatch) throw new NotFoundException('用户名或密码错误');
 
-    const { username, phone, roleId, id } = user;
-
-    const payload = { id, username, phone, roleId };
+    const { username, phone, curRoleId, avator, id, roles } = user;
+    const curId = roles ? roles[0].roleId : curRoleId;
+    const payload = { id, username, phone, curRoleId };
     return {
       username,
       phone,
-      roleId,
+      curRoleId: curId,
+      avator,
+      roles,
       id,
       access_token: this.jwtService.sign(payload)
     };

@@ -29,7 +29,9 @@ export class DepartmentService {
       const res = await this.prisma.department.findMany(joinQueryParams);
       const total = await this.prisma.department.count();
       return { list: res, total };
-    } catch (error) {}
+    } catch (error) {
+      console.log('🚀 ~ xzz: findBy -> error', error);
+    }
   }
 
   async findAll() {

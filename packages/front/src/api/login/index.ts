@@ -40,7 +40,7 @@ export const loginApi2 = (data: UserType): Promise<IResponse<any>> => {
 }
 
 export const registerApi2 = (data: UserRegisterType): Promise<IResponse<UserType2>> => {
-  return request.post({ url: 'api/userinfo/register', data })
+  return request.post({ url: 'api/user/register', data })
 }
 
 //  这里是 用户登录后  拿到 角色   根据已分配好的菜单及权限  获取当前 角色所拥有的菜单

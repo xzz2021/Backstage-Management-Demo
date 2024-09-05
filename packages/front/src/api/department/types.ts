@@ -24,7 +24,11 @@ export interface DepartmentUserItem {
   account: string
   email: string
   createTime: string
+  roles: any[]
+  roleArr?: any[]
   role: string
+  departmentId?: number
+
   department: DepartmentItem
 }
 

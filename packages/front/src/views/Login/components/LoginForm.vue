@@ -4,8 +4,8 @@ import { Form, FormSchema } from '@/components/Form'
 import { useI18n } from '@/hooks/web/useI18n'
 import { ElCheckbox, ElLink } from 'element-plus'
 import { useForm } from '@/hooks/web/useForm'
-import { loginApi, getTestRoleApi, getRoleMenuApi2, loginApi2 } from '@/api/login'
-import { useAppStore } from '@/store/modules/app'
+import { getRoleMenuApi2, loginApi2 } from '@/api/login'
+// import { useAppStore } from '@/store/modules/app'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useRouter } from 'vue-router'
 import type { RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
@@ -23,7 +23,7 @@ const { required } = useValidator()
 
 const emit = defineEmits(['to-register'])
 
-const appStore = useAppStore()
+// const appStore = useAppStore()
 
 const userStore = useUserStore()
 

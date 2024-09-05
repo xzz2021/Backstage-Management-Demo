@@ -36,7 +36,6 @@ const defaultRequestInterceptors = (config: InternalAxiosRequestConfig) => {
 }
 
 const defaultResponseInterceptors = (response: AxiosResponse) => {
-  console.log('🚀 ~ xzz: defaultResponseInterceptors -> response', response)
   if (response?.config?.responseType === 'blob') {
     // 如果是文件流，直接过
     return response

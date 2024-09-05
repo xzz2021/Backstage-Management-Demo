@@ -13,7 +13,7 @@ export interface DepartmentListResponse {
 export interface DepartmentUserParams {
   pageSize: number
   pageIndex: number
-  id: string
+  id: number
   username?: string
   account?: string
 }
