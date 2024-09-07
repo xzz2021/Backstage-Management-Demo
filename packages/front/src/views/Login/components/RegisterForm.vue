@@ -16,21 +16,21 @@ const { getElFormExpose, getFormData } = formMethods
 
 const { t } = useI18n()
 
-const { required, check, checkCode } = useValidator()
+const { required, check, checkCode, phone, lengthRange } = useValidator()
 
-const getCodeTime = ref(60)
-const getCodeLoading = ref(false)
-const getCode = () => {
-  getCodeLoading.value = true
-  const timer = setInterval(() => {
-    getCodeTime.value--
-    if (getCodeTime.value <= 0) {
-      clearInterval(timer)
-      getCodeTime.value = 60
-      getCodeLoading.value = false
-    }
-  }, 1000)
-}
+// const getCodeTime = ref(60)
+// const getCodeLoading = ref(false)
+// const getCode = () => {
+//   getCodeLoading.value = true
+//   const timer = setInterval(() => {
+//     getCodeTime.value--
+//     if (getCodeTime.value <= 0) {
+//       clearInterval(timer)
+//       getCodeTime.value = 60
+//       getCodeLoading.value = false
+//     }
+//   }, 1000)
+// }
 
 const schema = reactive<FormSchema[]>([
   {
@@ -188,11 +188,20 @@ const schema = reactive<FormSchema[]>([
     }
   }
 ])
+const validatecheckPwd = async (rule: any, value: any, callback: any) => {
+  const formData = await getFormData()
+  if (value !== formData.password) {
+    callback(new Error('两次输入的密码不一致!'))
+  } else {
+    callback()
+  }
+}
 
 const rules: FormRules = {
-  username: [required()],
+  username: [required(), lengthRange({ min: 2, max: 16 })],
+  phone: [required(), phone()],
   password: [required()],
-  check_password: [required(), check()],
+  check_password: [required(), check(), { asyncValidator: validatecheckPwd, trigger: 'blur' }],
   code: [required(), checkCode()],
   iAgree: [required()]
 }
@@ -209,14 +218,16 @@ const loginRegister = async () => {
   formRef?.validate(async (valid) => {
     if (valid) {
       try {
-        loading.value = true
         const formData = await getFormData()
+        loading.value = true
         const { password, phone, username } = formData
         const res = await registerApi2({ password, phone, username })
         const id = res?.data?.id
         if (id) {
           ElMessage.success('注册成功, 欢迎登陆!')
           toLogin()
+        } else {
+          ElMessage.error('注册失败, 请重试!')
         }
       } finally {
         loading.value = false
