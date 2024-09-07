@@ -18,6 +18,14 @@ export interface DepartmentUserParams {
   account?: string
 }
 
+export interface UserItem {
+  id: number
+  username: string
+  phone: string
+  avatar: string
+  curRoleId: number
+  roleList: { id: number; name: string }[]
+}
 export interface DepartmentUserItem {
   id: string
   username: string

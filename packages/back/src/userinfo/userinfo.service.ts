@@ -128,6 +128,42 @@ export class UserinfoService {
     }
   }
 
+  async findPersonById(idx: number) {
+    try {
+      // 通过id查询到用户的角色和部门信息
+      const user = await this.prisma.user.findUnique({
+        where: { id: idx },
+        include: {
+          roles: {
+            include: {
+              role: true
+            }
+          }
+        }
+      });
+      if (!user) {
+        return { code: 404, message: 'User not found' };
+      }
+      const { roles } = user;
+      let newRoles = [];
+      if (roles.length > 0) {
+        newRoles = roles?.map((item) => {
+          const { id, name } = item.role;
+          return { id, name };
+        });
+      }
+      // user.roleList = newRoles;
+      // const { id, name } = newRoles
+      const simplifyRolesList = newRoles.map((item) => {
+        return { name: item.name, id: item.id };
+      });
+      const { id, avator, phone, username, curRoleId } = user;
+      return { userinfo: { id, avator, phone, username, curRoleId, roleList: simplifyRolesList } };
+    } catch (error) {
+      console.log('🚀 ~ xzz: findDetailById -> error', error);
+    }
+  }
+
   async addUser(addUserinfoDto: AddUserinfoDto) {
     const { departmentId, roles, phone, username } = addUserinfoDto;
     const saltOrRounds = 10; // 数值越大速度越慢

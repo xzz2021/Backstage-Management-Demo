@@ -45,6 +45,14 @@ export class RoleController {
     return this.roleService.getMenuById(+param?.id);
   }
 
+  @Post('switchRole')
+  // 切换角色
+  switchRole(@Body() switchData: { id: number; curRoleId: number }) {
+    const userId = +switchData.id;
+    const curRoleId = +switchData.curRoleId;
+    return this.roleService.switchRole({ userId, curRoleId });
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.roleService.remove(+id);

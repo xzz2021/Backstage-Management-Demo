@@ -117,9 +117,8 @@ export class RoleService {
   }
 
   async update(updateRoleDto: any) {
-    const id = updateRoleDto.id;
+    const id = +updateRoleDto.id;
     delete updateRoleDto.id;
-    console.log('🚀 ~ xzz: update -> updateRoleDto.id', updateRoleDto);
     const updateStatement = {
       where: { id },
       data: updateRoleDto
@@ -150,44 +149,9 @@ export class RoleService {
       return [];
     }
     //  获取到 角色 所拥有 的 路由
-    const menuList = await this.getMenuByRole(user.curRoleId);
-    return menuList;
+    const menuList = await this.getMenuById(+user.curRoleId);
+    return menuList.menu;
   }
-
-  async getMenuByRole(roleId) {
-    // 获取权限路由id关联菜单表的json数据
-    //  1. 先获取所有菜单
-    // 2.  获取对应权限
-    const roleMenuData = await this.prisma.role.findUnique({
-      where: { id: roleId },
-      select: { menu: true }
-    });
-    // roles.map(async (role) => {
-    //   return await this.searchMenu(role);
-    // })
-    return [];
-    // const roleMenu = JSON.parse(roleData.menu) as rawMenuType[];
-    // console.log('🚀 ~ xzz: RoleService -> getMenuByRole -> roleMenu', roleMenu);
-    // // roleMenu 是json数据   [{menuid: 5, permission: ['edit']}, {menuid: 6, permission: ['add']}]]
-    // // const idValues = JSON.parse(roleMenu.menu).map((item) => item.menuid);
-    // const idValues = roleMenu.map((item) => item.menuid);
-    // const rawMenu = await this.prisma.menu.findMany({
-    //   where: {
-    //     id: { in: idValues }
-    //   }
-    // });
-    // const menuList = rawMenu.map((item) => {
-    //   roleMenu;
-    // });
-
-    // return menuList;
-
-    // return roleMenu || [];
-  }
-
-  // update(id: number, updateRoleDto: UpdateRoleDto) {
-  //   return `This action updates a #${id} role`;
-  // }
 
   async remove(id: number) {
     try {
@@ -242,5 +206,23 @@ export class RoleService {
       menu.meta.permission = permission;
     });
     return menus;
+  }
+
+  async switchRole({ userId, curRoleId }) {
+    // 1. 切换角色id
+    // 2. 返回新路由
+    try {
+      const res = await this.prisma.user.update({
+        where: { id: userId },
+        data: { curRoleId }
+      });
+      if (res?.id) {
+        const menuData = await this.getMenuById(curRoleId);
+        return { id: res.id, menu: menuData.menu };
+      }
+    } catch (error) {
+      console.log('🚀 ~ xzz: MenuService -> create -> error', error);
+      return { code: 400, error: error.message };
+    }
   }
 }

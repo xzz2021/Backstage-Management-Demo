@@ -21,7 +21,7 @@ export class AuthService {
 
     const { username, phone, curRoleId, avator, id, roles } = user;
     // console.log('🚀 ~ xzz: AuthService -> user', user);
-    const curId = roles ? roles[0].roleId : curRoleId;
+    const curId = curRoleId || roles[0].roleId;
     const payload = { id, username, phone, curRoleId: curId };
     // const rawRoles = roles?.map((item) => {
     //   // return { id: item.role.id, name: item.role.name };

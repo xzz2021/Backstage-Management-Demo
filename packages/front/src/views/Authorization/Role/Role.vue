@@ -146,7 +146,7 @@ const action = async (row: any, type: string) => {
 
   if (row?.id && type === 'edit') {
     const menu = await getEachMenu(row?.id) //  获取详细菜单数据
-    console.log('🚀 ~ xzz: action -> menu', menu)
+    // console.log('🚀 ~ xzz: action -> menu', menu)
     // return
     currentRow.value.menu = menu
   }

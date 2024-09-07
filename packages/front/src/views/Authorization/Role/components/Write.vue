@@ -5,7 +5,6 @@ import { PropType, reactive, watch, ref, unref, nextTick } from 'vue'
 import { useValidator } from '@/hooks/web/useValidator'
 import { useI18n } from '@/hooks/web/useI18n'
 import { ElTree, ElCheckboxGroup, ElCheckbox } from 'element-plus'
-import { getMenuListApi } from '@/api/menu'
 import { filter, eachTree } from '@/utils/tree'
 import { findIndex } from '@/utils'
 
@@ -112,7 +111,6 @@ const formSchema = ref<FormSchema[]>([
 
 const currentTreeData = ref()
 const nodeClick = (treeData: any) => {
-  console.log('🚀 ~ xzz: nodeClick -> treeData', treeData)
   currentTreeData.value = treeData
 }
 

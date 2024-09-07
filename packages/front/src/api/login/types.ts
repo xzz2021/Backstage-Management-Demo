@@ -4,6 +4,7 @@ export interface UserLoginType {
 }
 
 export interface UserType {
+  id: number
   username: string
   phone: string
   password: string

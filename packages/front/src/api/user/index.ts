@@ -1,5 +1,10 @@
 import request from '@/axios'
-import { DepartmentListResponse, DepartmentUserParams, DepartmentUserResponse } from './types'
+import {
+  DepartmentListResponse,
+  DepartmentUserParams,
+  DepartmentUserResponse,
+  UserItem
+} from './types'
 
 export const getDepartmentApi = () => {
   return request.get<DepartmentListResponse>({ url: '/mock/department/list' })
@@ -75,6 +80,15 @@ interface DetailUserResponse {
 
 export const getUserByIdApi2 = (params: { id: number }) => {
   return request.get<DetailUserResponse>({ url: '/api/user/detailById', params })
+}
+
+interface PersonResponse {
+  userinfo: UserItem
+}
+
+//  根据id获取用户个人中心信息  及角色数组
+export const getPersonByIdApi = (params: { id: number }) => {
+  return request.get<PersonResponse>({ url: '/api/user/personById', params })
 }
 
 interface IdResponse {

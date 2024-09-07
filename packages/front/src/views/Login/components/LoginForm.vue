@@ -17,8 +17,6 @@ import { BaseButton } from '@/components/Button'
 import { formatToTree } from '@/utils/tree'
 import defaultRouter from './defaultRouter'
 
-console.log('🚀 ~ xzz: getRole -> defaultRouter', defaultRouter)
-
 const { required } = useValidator()
 
 const emit = defineEmits(['to-register'])

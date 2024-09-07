@@ -1,5 +1,6 @@
 import request from '@/axios'
 import { RoleWithMenuItem } from './types'
+import { MenuItem } from '../menu/types'
 
 export const getRoleListApi = () => {
   return request.get({ url: '/mock/role/table' })
@@ -29,4 +30,13 @@ export const getAllRoleApi = () => {
 
 export const getMenuByIdApi = (params: { id: number }) => {
   return request.get<RoleWithMenuItem>({ url: '/api/role/getMenuById', params })
+}
+
+interface SwitchRoleResponse {
+  id: number
+  menu: MenuItem[]
+}
+// 切换角色
+export const switchRoleApi = (data) => {
+  return request.post<SwitchRoleResponse>({ url: '/api/role/switchRole', data })
 }

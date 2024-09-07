@@ -28,6 +28,12 @@ export class UserinfoController {
     return this.userinfoService.findDetailById(+param?.id);
   }
 
+  @Get('personById')
+  //  根据id获取用户个人中心信息  及角色数组
+  findPersonById(@Query() param: { id: string }) {
+    return this.userinfoService.findPersonById(+param?.id);
+  }
+
   @Post('add')
   addUser(@Body() addUserinfoDto: AddUserinfoDto) {
     return this.userinfoService.addUser(addUserinfoDto);
