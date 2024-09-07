@@ -56,25 +56,27 @@ export class RoleService {
   }
 
   async findAll() {
+    // 1. 获取的是 简要列表
+    // 2. 详细菜单权限数据 转移到打开瞬间  根据id 查询
     try {
-      // 1. Fetch all roles
-      const roles = (await this.prisma.role.findMany()) as any[];
-
-      // 2. Process each role
-      const updatedRoles = await Promise.all(
-        roles.map(async (role) => {
-          return await this.searchMenu(role);
-        })
-      );
-
-      return { list: updatedRoles, total: updatedRoles.length };
+      const roles = await this.prisma.role.findMany({
+        select: {
+          id: true,
+          name: true,
+          remark: true,
+          status: true,
+          createdAt: true
+        }
+      });
+      const total = await this.prisma.role.count();
+      return { list: roles, total };
     } catch (error) {
       console.error('Error in findAll:', error);
       throw error;
     }
   }
 
-  //  通过角色表信息 查询对应的实际菜单和相应按钮权限
+  //  ★★★★★★ 通过角色表信息 批量 查询对应的实际菜单和相应按钮权限 ★★★★★★
   async searchMenu(item) {
     const permissionMap = {};
     const menuIds = item.menu.map((menu) => {
@@ -87,7 +89,8 @@ export class RoleService {
     // Fetch menus with their meta and permissionList
     const menus = await this.prisma.menu.findMany({
       where: { id: { in: menuIds } },
-      include: { meta: true, permissionList: true }
+      // include: { meta: true, permissionList: true }
+      include: { meta: true }
     });
 
     // Update menu permissions
@@ -198,5 +201,46 @@ export class RoleService {
       console.log('🚀 ~ xzz: MenuService -> create -> error', error);
       return { code: 400, error: error.message };
     }
+  }
+
+  async getMenuById(id: number) {
+    // 根据角色id 获取相应 菜单 及权限数据
+    try {
+      // 1. 通过id查询到用户的角色信息
+      // 2. 通过角色menu遍历获取真实数据
+      const curRole = await this.prisma.role.findUnique({
+        where: { id }
+      });
+
+      const newRole = await this.searchSingleMenu(curRole);
+      return { menu: newRole };
+    } catch (error) {
+      console.log('🚀 ~ xzz: findDetailById -> error', error);
+    }
+  }
+
+  async searchSingleMenu(roleItem) {
+    const permissionMap = {};
+    const itemWithId = roleItem.menu.filter((menu) => menu?.id);
+    const menuIds = itemWithId.map((menu) => {
+      if (menu?.permission) {
+        permissionMap[menu.id] = menu.permission;
+      }
+      return menu.id;
+    });
+
+    // Fetch menus with their meta and permissionList
+    const menus = await this.prisma.menu.findMany({
+      where: { id: { in: menuIds } },
+      // include: { meta: true, permissionList: true }
+      include: { meta: true }
+    });
+
+    // Update menu permissions
+    menus.forEach((menu) => {
+      const permission = permissionMap[menu.id];
+      menu.meta.permission = permission;
+    });
+    return menus;
   }
 }

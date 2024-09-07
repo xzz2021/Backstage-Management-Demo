@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { onMounted, reactive, ref, unref } from 'vue'
-import { addRoleApi, delRoleApi2, editRoleApi, getRoleListApi, getRoleListApi2 } from '@/api/role'
+import { addRoleApi, delRoleApi2, editRoleApi, getAllRoleApi, getMenuByIdApi } from '@/api/role'
 import { useTable } from '@/hooks/web/useTable'
 import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableColumn } from '@/components/Table'
@@ -12,7 +12,7 @@ import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
 import { BaseButton } from '@/components/Button'
-import { formatToTree } from '@/utils/tree'
+import { buildTree } from '@/utils/tree'
 import { useMenuStore } from '@/store/modules/menu'
 
 const menuStore = useMenuStore()
@@ -26,7 +26,7 @@ const { t } = useI18n()
 
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
-    const res = await getRoleListApi2()
+    const res = await getAllRoleApi()
     // 1. 获取的是 for循环模拟处理的数据  没有permission 也没有permissionList
     // 2. 详细菜单权限数据 转移到打开瞬间 查询
     // console.log('🚀 ~ xzz: res', res?.data?.list)
@@ -35,21 +35,13 @@ const { tableRegister, tableState, tableMethods } = useTable({
     //   list: res.data.list || [],
     //   total: res.data.total
     // }
-    let newList = res?.data?.list
-    if (newList) {
-      newList.map((item) => {
-        item.menu = formatToTree(item.menu)
-      })
-      console.log('🚀 ~ xzz: newList', newList)
+    if (res?.data) {
+      return res.data
     } else {
-      newList = {
+      return {
         list: [],
         total: 0
       }
-    }
-    return {
-      list: newList || [],
-      total: newList.total
     }
   }
 })
@@ -139,10 +131,25 @@ const writeRef = ref<ComponentRef<typeof Write>>()
 
 const saveLoading = ref(false)
 
-const action = (row: any, type: string) => {
+const getEachMenu = async (id) => {
+  const res = await getMenuByIdApi({ id })
+  if (res?.data) {
+    return buildTree(res.data.menu)
+  }
+
+  return []
+}
+const action = async (row: any, type: string) => {
   dialogTitle.value = t(type === 'edit' ? 'exampleDemo.edit' : 'exampleDemo.detail')
   actionType.value = type
   currentRow.value = row
+
+  if (row?.id && type === 'edit') {
+    const menu = await getEachMenu(row?.id) //  获取详细菜单数据
+    console.log('🚀 ~ xzz: action -> menu', menu)
+    // return
+    currentRow.value.menu = menu
+  }
   dialogVisible.value = true
 }
 

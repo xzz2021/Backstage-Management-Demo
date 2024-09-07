@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto, UpdateRoleDto } from './role.dto';
 import { AuthGuard } from 'src/allProcessor/guard/auth.guard';
@@ -38,6 +38,11 @@ export class RoleController {
   @Get('rolelist')
   findAllRole() {
     return this.roleService.findAllRole();
+  }
+
+  @Get('getMenuById')
+  findDetailById(@Query() param: { id: string }) {
+    return this.roleService.getMenuById(+param?.id);
   }
 
   @Delete(':id')

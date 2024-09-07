@@ -20,7 +20,7 @@ export class AuthService {
     if (!isMatch) throw new NotFoundException('用户名或密码错误');
 
     const { username, phone, curRoleId, avator, id, roles } = user;
-    console.log('🚀 ~ xzz: AuthService -> user', user);
+    // console.log('🚀 ~ xzz: AuthService -> user', user);
     const curId = roles ? roles[0].roleId : curRoleId;
     const payload = { id, username, phone, curRoleId: curId };
     // const rawRoles = roles?.map((item) => {

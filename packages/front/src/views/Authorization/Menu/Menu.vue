@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { reactive, ref, unref } from 'vue'
-import { addMenuApi, delMenuApi2, editMenuApi, getMenuListApi2 } from '@/api/menu'
+import { addMenuApi, delMenuApi2, editMenuApi } from '@/api/menu'
 import { useTable } from '@/hooks/web/useTable'
 import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableColumn } from '@/components/Table'

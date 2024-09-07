@@ -1,4 +1,5 @@
 import request from '@/axios'
+import { RoleWithMenuItem } from './types'
 
 export const getRoleListApi = () => {
   return request.get({ url: '/mock/role/table' })
@@ -17,11 +18,15 @@ export const delRoleApi2 = (id) => {
 }
 
 //  带有权限的列表
-export const getRoleListApi2 = () => {
-  return request.get({ url: '/api/role/list' })
-}
+// export const getRoleListApi2 = () => {
+//   return request.get<RoleListResponse>({ url: '/api/role/list' })
+// }
 
 //  只返回简单的角色列表  供 用户管理模块 下拉选择
 export const getAllRoleApi = () => {
   return request.get({ url: '/api/role/rolelist' })
+}
+
+export const getMenuByIdApi = (params: { id: number }) => {
+  return request.get<RoleWithMenuItem>({ url: '/api/role/getMenuById', params })
 }
