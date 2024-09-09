@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserinfoModule } from './userinfo/userinfo.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-
+// 测试
 // import { PrismaModule } from './prisma/prisma.module';
 import { PrismaModule } from 'nestjs-prisma';
 import { AuthModule } from './auth/auth.module';
