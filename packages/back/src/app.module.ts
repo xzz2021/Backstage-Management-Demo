@@ -25,7 +25,7 @@ import { DepartmentModule } from './department/department.module';
   ],
   controllers: [AppController],
   providers: [
-    AppService
+    AppService,
     // {
     //   //  全局注册 JWT token守卫    jwt一定要放在角色之前  因为要解析到 用户   才能拿到 角色
     //   provide: APP_GUARD,

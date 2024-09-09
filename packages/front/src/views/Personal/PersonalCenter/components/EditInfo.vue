@@ -4,6 +4,7 @@ import { useForm } from '@/hooks/web/useForm'
 import { useValidator } from '@/hooks/web/useValidator'
 import { reactive, ref, watch } from 'vue'
 import { ElDivider, ElMessage, ElMessageBox } from 'element-plus'
+import { updateInfoApi } from '@/api/user'
 
 const props = defineProps({
   userInfo: {
@@ -39,7 +40,7 @@ const rules = reactive({
 })
 
 const { formRegister, formMethods } = useForm()
-const { setValues, getElFormExpose } = formMethods
+const { setValues, getElFormExpose, getFormData } = formMethods
 
 watch(
   () => props.userInfo,
@@ -67,8 +68,16 @@ const save = async () => {
       .then(async () => {
         try {
           saveLoading.value = true
-          // 这里可以调用修改用户信息接口
-          ElMessage.success('修改成功')
+          const formData = await getFormData()
+          const { username, phone } = formData
+          const res = await updateInfoApi({ id: props.userInfo.id, username, phone })
+          const resid = res?.data?.id
+          if (resid) {
+            // 这里可以调用修改用户信息接口
+            ElMessage.success('修改成功')
+          } else {
+            ElMessage.error('修改失败')
+          }
         } catch (error) {
           console.log(error)
         } finally {

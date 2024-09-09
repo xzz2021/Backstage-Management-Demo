@@ -53,7 +53,7 @@ fetchDetailUserApi()
 const curRole = computed(() => {
   if (userInfo.value?.roleList && userInfo.value?.roleList?.length > 0) {
     const { roleList, curRoleId = null } = userInfo.value as UserItem
-    return roleList.find((item) => item?.id == curRoleId)?.name || '未知'
+    return roleList.find((item) => item?.id == curRoleId)?.name || roleList[0].name || '未知'
   }
   return '未知'
 })
@@ -163,15 +163,15 @@ const updateRouter = async (routers) => {
         </div>
       </div>
       <ElDivider />
-      <div class="flex justify-between items-center">
-        <div>当前角色：</div>
-        <div>
-          <ElTag class="ml-2 mb-w">{{ curRole }} </ElTag>
-        </div>
-      </div>
-      <ElDivider />
-
       <div v-if="userInfo?.roleList?.length && userInfo?.roleList?.length > 1">
+        <div class="flex justify-between items-center">
+          <div>当前角色：</div>
+          <div>
+            <ElTag class="ml-2 mb-w">{{ curRole }} </ElTag>
+          </div>
+        </div>
+        <ElDivider />
+
         <div class="flex justify-between items-center">
           <div>切换角色：</div>
           <div>

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -17,7 +17,7 @@ export class AuthService {
       }
     });
     const isMatch = await bcrypt.compare(pwd, user.password);
-    if (!isMatch) throw new NotFoundException('用户名或密码错误');
+    if (!isMatch) throw new NotAcceptableException('用户名或密码错误');
 
     const { username, phone, curRoleId, avator, id, roles } = user;
     // console.log('🚀 ~ xzz: AuthService -> user', user);

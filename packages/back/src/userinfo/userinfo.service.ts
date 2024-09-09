@@ -244,6 +244,51 @@ export class UserinfoService {
     }
   }
 
+
+  // 用户更新个人信息
+  async updateInfo(updateUserinfoDto: UpdateUserinfoDto, userId: number) {
+    const { id, username,  phone, } = updateUserinfoDto;
+    if(id != userId) return { code: 400, message: 'userId not match' };
+    try {
+        const userSave = await this.prisma.user.update({
+          where: { id },
+          data: {
+            username,
+            phone,
+          },
+          select: {
+            id: true
+          }
+        });
+      const idx = userSave?.id;
+      if (idx) return userSave;
+    } catch (error) {
+      console.log(' ~ xzz: UserinfoService -> addUser -> error', error);
+      return { code: 400, error: error.message };
+    }
+  }
+
+  async updatePwd(updateUserinfoDto: UpdateUserinfoDto, userId: number) {
+    const { id, password } = updateUserinfoDto;
+    if(id != userId) return { code: 400, message: 'userId not match' };
+    try {
+        const userSave = await this.prisma.user.update({
+          where: { id },
+          data: {
+            password
+          },
+          select: {
+            id: true
+          }
+        });
+      const idx = userSave?.id;
+      if (idx) return userSave;
+    } catch (error) {
+      console.log(' ~ xzz: UserinfoService -> addUser -> error', error);
+      return { code: 400, error: error.message };
+    }
+  }
+
   async remove(id: number) {
     // 1. 删除用户
     // 2. 删除userRole 关联数据

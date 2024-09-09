@@ -97,3 +97,12 @@ interface IdResponse {
 export const resetPasswordApi = (data) => {
   return request.post<IdResponse>({ url: '/api/user/resetPassword', data })
 }
+
+//  个人中心操作
+export const updateInfoApi = (data) => {
+  return request.post({ url: '/api/user/updateInfo', data })
+}
+
+export const updatePwdApi = (data) => {
+  return request.post({ url: '/api/user/updatePwd', data })
+}

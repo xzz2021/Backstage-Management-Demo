@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req, UseGuards } from '@nestjs/common';
 import { UserinfoService } from './userinfo.service';
 import { AddUserinfoDto, CreateUserinfoDto, ResetPwdDto, UpdateUserinfoDto } from './userinfo.dto';
+import { AuthGuard } from 'src/allProcessor/guard/auth.guard';
 
 @Controller('user')
 export class UserinfoController {
@@ -47,6 +48,20 @@ export class UserinfoController {
   @Post('resetPassword')
   resetPassword(@Body() resetPwdDto: ResetPwdDto) {
     return this.userinfoService.resetPassword(resetPwdDto);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('updateInfo')
+  updateInfo(@Body() updateUserinfoDto: UpdateUserinfoDto, @Req() req: any) {
+    const user = req.user;
+    return this.userinfoService.updateInfo(updateUserinfoDto, user.id);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('updatePwd')
+  updatePwd(@Body() updateUserinfoDto: UpdateUserinfoDto, @Req() req: any) {
+    const user = req.user;
+    return this.userinfoService.updatePwd(updateUserinfoDto, user.id);
   }
 
   @Delete(':id')

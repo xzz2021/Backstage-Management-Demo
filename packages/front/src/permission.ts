@@ -28,6 +28,7 @@ router.beforeEach(async (to, from, next) => {
       if (permissionStore.getIsAddRouters) {
         // const all = router.getRoutes()
         // console.log('🚀 ~ xzz: all', all)
+
         next()
         return
       }
