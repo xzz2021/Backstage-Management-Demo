@@ -85,6 +85,7 @@ export class RoleService {
       }
       return menu.id;
     });
+    
 
     // Fetch menus with their meta and permissionList
     const menus = await this.prisma.menu.findMany({
@@ -135,6 +136,8 @@ export class RoleService {
   async getRoleMenu(user) {
     if (user.id === 1) {
       //  直接返回所有路由
+
+
       // return adminList;
       const res = await this.prisma.menu.findMany({
         include: {
@@ -144,12 +147,12 @@ export class RoleService {
       });
       return res;
     }
-    if (user.curRoleId == null) {
+    if (!user?.curRoleId) {
       // 用户未分配角色
       return [];
     }
     //  获取到 角色 所拥有 的 路由
-    const menuList = await this.getMenuById(+user.curRoleId);
+    const menuList = await this.getMenuById(user.curRoleId);
     return menuList.menu;
   }
 
@@ -159,7 +162,6 @@ export class RoleService {
         where: { id },
         select: { id: true }
       });
-      console.log('🚀 ~ xzz: MenuService -> remove -> res', res);
       if (res?.id) return res;
     } catch (error) {
       console.log('🚀 ~ xzz: MenuService -> create -> error', error);

@@ -22,7 +22,6 @@ export class UserinfoService {
     if (isExit?.id && createUserinfo.phone) {
       return { code: 400, message: 'The phone number already exists' };
     }
-    // return
 
     // 创建注册用户信息  存储
     try {
@@ -32,6 +31,7 @@ export class UserinfoService {
           id: true
         }
       });
+			console.log("TCL: create -> userSave", userSave)
       return userSave;
     } catch (err) {
       //  错误  抛出异常

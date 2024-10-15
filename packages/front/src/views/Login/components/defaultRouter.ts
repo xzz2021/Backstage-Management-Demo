@@ -9,6 +9,7 @@ export default [
       icon: 'vi-ant-design:dashboard-filled',
       alwaysShow: true
     },
+
     children: [
       {
         path: 'workplace',

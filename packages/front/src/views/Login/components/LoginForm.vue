@@ -269,12 +269,12 @@ const getRole = async () => {
   if (res) {
     // 这里是首次登陆  获取并设定路由信息
     const routers = res?.data || []
-    let treeRouters = formatToTree(routers) //  转换成树形结构
+    const treeRouters = formatToTree(routers) //  转换成树形结构
     // let treeRouters = routers //  转换成树形结构
-    if (treeRouters.length == 0) {
-      // 若没有路由 就使用默认路由
-      treeRouters = defaultRouter
-    }
+    //  if (treeRouters.length == 0) {
+    //    // 若没有路由 就使用默认路由
+    //    treeRouters = defaultRouter
+    //  }
     userStore.setRoleRouters(treeRouters)
     await permissionStore.generateRoutes(treeRouters).catch(() => {}) // 合并生成路由
     permissionStore.getAddRouters.forEach((route) => {

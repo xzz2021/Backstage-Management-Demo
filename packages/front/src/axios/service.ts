@@ -44,9 +44,9 @@ axiosInstance.interceptors.response.use(
     // if (error?.status == 401) {
     //   ElMessage.error('接口不存在,请联系后端管理员!')
     // }
-    if (error?.response?.data?.error) {
-      ElMessage.error(error?.response?.data?.message)
-    }
+    // if (error?.response?.data?.error) {
+    //   ElMessage.error(error?.response?.data?.message)
+    // }
     return Promise.reject(error)
   }
 )
