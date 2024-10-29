@@ -14,7 +14,7 @@ import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
 import { BaseButton } from '@/components/Button'
 import { useMenuStore } from '@/store/modules/menu'
-
+// import { getRole } from '@/utils/globalFn'
 const menuStore = useMenuStore()
 const { t } = useI18n()
 
@@ -212,6 +212,9 @@ const save = async () => {
     <Search :schema="searchSchema" @reset="setSearchParams" @search="setSearchParams" />
     <div class="mb-10px">
       <BaseButton type="primary" @click="AddAction">{{ t('exampleDemo.add') }}</BaseButton>
+    </div>
+    <div class="mb-10px">
+      <BaseButton type="primary">更新菜单</BaseButton>
     </div>
     <Table
       :columns="tableColumns"

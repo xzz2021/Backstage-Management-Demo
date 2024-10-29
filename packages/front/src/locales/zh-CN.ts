@@ -168,6 +168,8 @@ export default {
     user: '用户管理',
     role: '角色管理',
     document: '文档',
+    ordermanage: '订单管理',
+    salelist: '销售订单',
     inputPassword: '密码输入框',
     sticky: '黏性',
     treeTable: '树形表格',

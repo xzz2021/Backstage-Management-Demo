@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto, UpdateRoleDto } from './role.dto';
-import { AuthGuard } from 'src/allProcessor/guard/auth.guard';
+import { JwtAuthGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('role')
 export class RoleController {
@@ -12,7 +12,7 @@ export class RoleController {
   //   return this.roleService.create(createRoleDto);
   // }
 
-  @UseGuards(AuthGuard) //  只有进过了AuthGuard 才能拿到token解析出的 用户信息
+  @UseGuards(JwtAuthGuard) //  只有进过了AuthGuard 才能拿到token解析出的 用户信息
   @Get('getRoleMenu')
   roleMenu(@Req() req: any) {
     const user = req.user;

@@ -170,6 +170,8 @@ export default {
     user: 'User management',
     role: 'Role management',
     document: 'Document',
+    ordermanage: 'order management',
+    salelist: 'sales list',
     inputPassword: 'InputPassword',
     sticky: 'Sticky',
     treeTable: 'Tree table',
