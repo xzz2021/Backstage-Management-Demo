@@ -4,8 +4,7 @@ import { addMenuApi, delMenuApi2, editMenuApi } from '@/api/menu'
 import { useTable } from '@/hooks/web/useTable'
 import { useI18n } from '@/hooks/web/useI18n'
 import { Table, TableColumn } from '@/components/Table'
-import { ElMessage, ElTag } from 'element-plus'
-import { Icon } from '@/components/Icon'
+import { ElMessage } from 'element-plus'
 import { Search } from '@/components/Search'
 import { FormSchema } from '@/components/Form'
 import { ContentWrap } from '@/components/ContentWrap'
@@ -13,18 +12,23 @@ import Write from './components/Write.vue'
 import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
 import { BaseButton } from '@/components/Button'
-import { useOrderStore } from '@/store/modules/order'
-// import { getRole } from '@/utils/globalFn'
-const orderStore = useOrderStore()
+import { getOrderListApi } from '@/api/order'
 const { t } = useI18n()
 
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
-    return await orderStore.setMenuList()
+    const { pageSize, currentPage } = tableState
+    // 根据 部门id 进行分页查询
+    const res = await getOrderListApi({
+      pageIndex: unref(currentPage),
+      pageSize: unref(pageSize),
+      ...unref(searchParams)
+    })
+    return res?.data || { list: [], total: 0 }
   }
 })
 
-const { dataList, loading } = tableState
+const { dataList, loading, total } = tableState
 const { getList } = tableMethods
 
 const tableColumns = reactive<TableColumn[]>([
@@ -49,30 +53,10 @@ const tableColumns = reactive<TableColumn[]>([
     field: 'total_money',
     label: '订单总额'
   },
-  // {
-  //   field: 'access_point_address',
-  //   label: '配送地址',
-  //   slots: {
-  //     default: (data: any) => {
-  //       const addressData = data.row?.access_point_address
-  //       const address = addressData ? JSON.parse(addressData) : ''
-  //       if (address?.id) {
-  //         const { province, city, district, street } = address
-  //         return province + city + district + street
-  //       }
-  //       return ''
-  //     }
-  //   }
-  // },
   {
     field: 'create_date',
     label: '下单时间'
   },
-  // {
-  //   field: 'note',
-  //   label: '备注信息'
-  // },
-
   {
     field: 'action',
     label: t('userDemo.action'),
@@ -134,14 +118,15 @@ const action = (row: any, type: string) => {
   dialogVisible.value = true
 }
 
-const AddAction = () => {
-  dialogTitle.value = t('exampleDemo.add')
-  currentRow.value = undefined
-  dialogVisible.value = true
-  actionType.value = ''
-}
+// const AddAction = () => {
+//   dialogTitle.value = t('exampleDemo.add')
+//   currentRow.value = undefined
+//   dialogVisible.value = true
+//   actionType.value = ''
+// }
 
 const delAction = async (idx: number) => {
+  return
   try {
     const res = await delMenuApi2(idx)
     console.log('🚀 ~ xzz: delAction -> res', res)
@@ -159,13 +144,14 @@ const delAction = async (idx: number) => {
 }
 
 const save = async () => {
+  return (dialogVisible.value = false)
+
   const write = unref(writeRef)
   const formData = await write?.submit()
-  const isEdit = actionType.value === 'edit' //  判断时修改还是新增
+  const isEdit = actionType.value === 'edit' //  判断是修改还是新增
   if (formData) {
     try {
-      // formData.title = formData.meta.title.trim() //  去除首尾空格
-      delete formData.children
+      formData && delete formData?.children
       //  提交 新增 或者 修改
       saveLoading.value = true
       const res = isEdit ? await editMenuApi(formData) : await addMenuApi(formData)
@@ -188,24 +174,21 @@ const save = async () => {
 <template>
   <ContentWrap>
     <Search :schema="searchSchema" @reset="setSearchParams" @search="setSearchParams" />
-    <div class="mb-10px">
+    <!-- <div class="mb-10px">
       <BaseButton type="primary" @click="AddAction">{{ t('exampleDemo.add') }}</BaseButton>
-    </div>
+    </div> -->
     <Table
       :columns="tableColumns"
-      default-expand-all
-      node-key="id"
       :data="dataList"
       :loading="loading"
+      :pagination="{ total }"
       @register="tableRegister"
     />
   </ContentWrap>
 
   <Dialog v-model="dialogVisible" :title="dialogTitle">
     <Write v-if="actionType !== 'detail'" ref="writeRef" :current-row="currentRow" />
-
     <Detail v-if="actionType === 'detail'" :current-row="currentRow" />
-
     <template #footer>
       <BaseButton
         v-if="actionType !== 'detail'"
