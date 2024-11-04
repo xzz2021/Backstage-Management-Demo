@@ -34,72 +34,45 @@ const tableColumns = reactive<TableColumn[]>([
     type: 'index'
   },
   {
-    field: 'meta.title',
-    label: t('menu.menuName'),
-    slots: {
-      default: (data: any) => {
-        const title = data.row.meta.title
-        return <>{t(title)}</>
-      }
-    }
+    field: 'name',
+    label: '订单号'
   },
   {
-    field: 'meta.icon',
-    label: t('menu.icon'),
-    slots: {
-      default: (data: any) => {
-        const icon = data.row.meta.icon
-        if (icon) {
-          return (
-            <>
-              <Icon icon={icon} />
-            </>
-          )
-        } else {
-          return null
-        }
-      }
-    }
+    field: 'username',
+    label: '客户名称'
+  },
+  {
+    field: 'phone',
+    label: '客户手机'
+  },
+  {
+    field: 'total_money',
+    label: '订单总额'
   },
   // {
-  //   field: 'meta.permission',
-  //   label: t('menu.permission'),
+  //   field: 'access_point_address',
+  //   label: '配送地址',
   //   slots: {
   //     default: (data: any) => {
-  //       const permission = data.row.meta.permission
-  //       return permission ? <>{permission.join(', ')}</> : null
+  //       const addressData = data.row?.access_point_address
+  //       const address = addressData ? JSON.parse(addressData) : ''
+  //       if (address?.id) {
+  //         const { province, city, district, street } = address
+  //         return province + city + district + street
+  //       }
+  //       return ''
   //     }
   //   }
   // },
   {
-    field: 'component',
-    label: t('menu.component'),
-    slots: {
-      default: (data: any) => {
-        const component = data.row.component
-        return <>{component === '#' ? '顶级目录' : component === '##' ? '子目录' : component}</>
-      }
-    }
+    field: 'create_date',
+    label: '下单时间'
   },
-  {
-    field: 'path',
-    label: t('menu.path')
-  },
-  {
-    field: 'status',
-    label: t('menu.status'),
-    slots: {
-      default: (data: any) => {
-        return (
-          <>
-            <ElTag type={data.row.status ? 'success' : 'danger'}>
-              {data.row.status ? t('userDemo.enable') : t('userDemo.disable')}
-            </ElTag>
-          </>
-        )
-      }
-    }
-  },
+  // {
+  //   field: 'note',
+  //   label: '备注信息'
+  // },
+
   {
     field: 'action',
     label: t('userDemo.action'),
@@ -127,8 +100,13 @@ const tableColumns = reactive<TableColumn[]>([
 
 const searchSchema = reactive<FormSchema[]>([
   {
-    field: 'meta.title',
-    label: t('menu.menuName'),
+    field: 'phone',
+    label: '客户手机',
+    component: 'Input'
+  },
+  {
+    field: 'name',
+    label: '订单号',
     component: 'Input'
   }
 ])
