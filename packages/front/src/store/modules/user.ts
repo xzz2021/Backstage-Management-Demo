@@ -14,6 +14,7 @@ interface UserState {
   roleRouters?: string[] | AppCustomRouteRecordRaw[]
   rememberMe: boolean
   loginInfo?: UserLoginType
+  unReadCount: number
 }
 
 export const useUserStore = defineStore('user', {
@@ -25,7 +26,8 @@ export const useUserStore = defineStore('user', {
       roleRouters: undefined,
       // 记住我
       rememberMe: true,
-      loginInfo: undefined
+      loginInfo: undefined,
+      unReadCount: 6
     }
   },
   getters: {
@@ -46,6 +48,9 @@ export const useUserStore = defineStore('user', {
     },
     getLoginInfo(): UserLoginType | undefined {
       return this.loginInfo
+    },
+    getUnReadCount(): number {
+      return this.unReadCount
     }
   },
   actions: {
@@ -60,6 +65,9 @@ export const useUserStore = defineStore('user', {
     },
     setRoleRouters(roleRouters: string[] | AppCustomRouteRecordRaw[]) {
       this.roleRouters = roleRouters
+    },
+    setUnReadCount(count: number) {
+      this.unReadCount = count
     },
     logoutConfirm() {
       const { t } = useI18n()

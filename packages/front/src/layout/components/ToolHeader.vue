@@ -8,12 +8,15 @@ import { Screenfull } from '@/components/Screenfull'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { useAppStore } from '@/store/modules/app'
 import { useDesign } from '@/hooks/web/useDesign'
+import { Notification } from '@/components/Notification'
+import { useUserStore } from '@/store/modules/user'
 
 const { getPrefixCls, variables } = useDesign()
 
 const prefixCls = getPrefixCls('tool-header')
 
 const appStore = useAppStore()
+const userStore = useUserStore()
 
 // 面包屑
 const breadcrumb = computed(() => appStore.getBreadcrumb)
@@ -53,6 +56,9 @@ export default defineComponent({
           </div>
         ) : undefined}
         <div class="h-full flex items-center">
+          {userStore.getUnReadCount > 0 ? (
+            <Notification class="custom-hover" color="var(--top-header-text-color)" />
+          ) : undefined}
           {screenfull.value ? (
             <Screenfull class="custom-hover" color="var(--top-header-text-color)"></Screenfull>
           ) : undefined}

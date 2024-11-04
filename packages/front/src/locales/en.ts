@@ -194,7 +194,8 @@ export default {
     personalCenter: 'Personal center',
     personal: 'Personal',
     avatars: 'Avatars',
-    iAgree: 'I agree'
+    iAgree: 'I agree',
+    notification: 'notification'
   },
   permission: {
     hasPermission: 'Please set the operation permission value'

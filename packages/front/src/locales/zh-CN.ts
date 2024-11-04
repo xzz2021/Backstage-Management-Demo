@@ -190,7 +190,8 @@ export default {
     personalCenter: '个人中心',
     personal: '个人',
     avatars: '头像列表',
-    iAgree: '我同意'
+    iAgree: '我同意',
+    notification: '消息通知'
   },
   permission: {
     hasPermission: '请设置操作权限值'
@@ -536,7 +537,10 @@ export default {
     // 禁用
     disable: '禁用',
     // 上级部门
-    superiorDepartment: '上级部门'
+    superiorDepartment: '上级部门',
+    hasRead: '已读',
+    unRead: '未读'
+    // 已删除
   },
   menu: {
     menuName: '菜单名称',
