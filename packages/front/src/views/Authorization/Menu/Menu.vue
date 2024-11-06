@@ -14,9 +14,13 @@ import Detail from './components/Detail.vue'
 import { Dialog } from '@/components/Dialog'
 import { BaseButton } from '@/components/Button'
 import { useMenuStore } from '@/store/modules/menu'
+import { useLogin } from '@/hooks/web/useLogin'
 // import { getRole } from '@/utils/globalFn'
 const menuStore = useMenuStore()
 const { t } = useI18n()
+
+const redirect = ref<string>('/authorization/menu')
+const { getRoleMenu } = useLogin(redirect)
 
 const { tableRegister, tableState, tableMethods } = useTable({
   fetchDataApi: async () => {
@@ -172,7 +176,8 @@ const delAction = async (idx: number) => {
     if (id) {
       dialogVisible.value = false
       ElMessage.success('更新成功!')
-      getList()
+      // getList()
+      getRoleMenu()
     }
   } catch (error) {
     console.log(' ~ xzz: delAction -> error', error)
@@ -197,6 +202,7 @@ const save = async () => {
         dialogVisible.value = false
         ElMessage.success('更新成功!')
         getList()
+        getRoleMenu()
       }
     } catch (error) {
       console.log('🚀 ~ xzz: save -> error', error)
@@ -214,7 +220,7 @@ const save = async () => {
       <BaseButton type="primary" @click="AddAction">{{ t('exampleDemo.add') }}</BaseButton>
     </div>
     <div class="mb-10px">
-      <BaseButton type="primary">更新菜单</BaseButton>
+      <BaseButton type="primary" @click="getRoleMenu">更新菜单</BaseButton>
     </div>
     <Table
       :columns="tableColumns"

@@ -15,12 +15,16 @@ import { Icon } from '@/components/Icon'
 import { useUserStore } from '@/store/modules/user'
 import { BaseButton } from '@/components/Button'
 import { formatToTree } from '@/utils/tree'
-import defaultRouter from './defaultRouter'
+import { useLogin } from './hooks'
+// import defaultRouter from './defaultRouter'
 
 const { required } = useValidator()
 
 const emit = defineEmits(['to-register'])
 
+const redirect = ref<string>('')
+
+const { getRole } = useLogin(redirect)
 // const appStore = useAppStore()
 
 const userStore = useUserStore()
@@ -216,8 +220,6 @@ const iconColor = '#999'
 
 const hoverColor = 'var(--el-color-primary)'
 
-const redirect = ref<string>('')
-
 watch(
   () => currentRoute.value,
   (route: RouteLocationNormalizedLoaded) => {
@@ -260,29 +262,6 @@ const signIn = async () => {
       }
     }
   })
-}
-
-// 获取角色信息
-const getRole = async () => {
-  const res = await getRoleMenuApi2() //  通过token解析 获取角色路由及权限
-  //  上面模拟根据角色获取路由
-  if (res) {
-    // 这里是首次登陆  获取并设定路由信息
-    const routers = res?.data || []
-    const treeRouters = formatToTree(routers) //  转换成树形结构
-    // let treeRouters = routers //  转换成树形结构
-    //  if (treeRouters.length == 0) {
-    //    // 若没有路由 就使用默认路由
-    //    treeRouters = defaultRouter
-    //  }
-    userStore.setRoleRouters(treeRouters)
-    await permissionStore.generateRoutes(treeRouters).catch(() => {}) // 合并生成路由
-    permissionStore.getAddRouters.forEach((route) => {
-      addRoute(route as RouteRecordRaw) // 动态添加可访问路由表 获得实际 component组件
-    })
-    permissionStore.setIsAddRouters(true)
-    push({ path: redirect.value || permissionStore.addRouters[0].path })
-  }
 }
 
 // 去注册页面
