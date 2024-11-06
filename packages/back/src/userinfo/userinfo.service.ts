@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AddUserinfoDto, CreateUserinfoDto, ResetPwdDto, UpdateUserinfoDto } from './userinfo.dto';
 // import { PrismaService } from '../prisma/prisma.service';
 // import { Prisma } from '@prisma/client';
-import { PrismaService } from 'nestjs-prisma';
+import { PrismaService  } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserinfoService {

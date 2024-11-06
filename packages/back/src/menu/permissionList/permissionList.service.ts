@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePermissionListDto, UpdatePermissionListDto } from './permissionList.dto';
-import { PrismaService } from 'nestjs-prisma';
+import { PrismaService  } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PermissionListService {

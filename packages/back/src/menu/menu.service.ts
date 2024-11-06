@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMenuDto, UpdateMenuDto } from './menu.dto';
-import { PrismaService } from 'nestjs-prisma';
+import { PrismaService  } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class MenuService {
