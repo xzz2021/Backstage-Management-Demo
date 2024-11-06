@@ -139,7 +139,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       cssTarget: ['chrome31']
     },
     server: {
-      port: 4000,
+      port: 5555,
       proxy: {
         // 选项写法
         '/api': {
